@@ -3,14 +3,14 @@
  * Author: @justindantzer
  * Licensed under the MIT license
  * 
- * id			string	specify parent element id attribute
- * showpause	int		specify display of pause button, defaults to 1
- * pauseimage	string	set url for image to be used as pause button
- * separator	string	used as separator in nav controls
- * navtext		string	set the attribute containing text for the nav link
- * interval		int		set auto-advance interval in milliseconds, defaults to 10000
- * action		string	choose nav control trigger action, defaults to 'click'
- * equalheight	int		choose to set parent to height of tallest slide, defaults to 0
+ * id           string    specify parent element id attribute
+ * showpause    int       specify display of pause button, defaults to 1
+ * pauseimage   string    set url for image to be used as pause button
+ * separator    string    used as separator in nav controls
+ * navtext      string    set the attribute containing text for the nav link
+ * interval     int       set auto-advance interval in milliseconds, defaults to 10000
+ * action       string    choose nav control trigger action, defaults to 'click'
+ * equalheight  int       choose to set parent to height of tallest slide, defaults to 0
  */
 
 (function($){
