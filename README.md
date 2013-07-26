@@ -9,13 +9,14 @@ $(selector).backslider();
 or
 ```javascript
 $(selector).backslider({
-	'id': '', // set id attribute of parent
-	'showpause': 1, // show pause element
-	'separator': '', // set separator for nav control items
-	'navtext': '', // set slide attribute for nav control item text
-	'interval': 10000, // set auto-advance interval
-	'action': 'hover', // set action to trigger nav control
-	'equalheight': 0 // trigger height of slides to be equalized
+	action: 'hover',    // set action to trigger nav control
+	allowpause: false,  // show pause element
+	controls: false     // show nav controls
+	equalheight: false, // trigger height of slides to be equalized
+	interval: 10000,    // set auto-advance interval
+	navtext: '',        // set slide attribute for nav control item text
+	pauseimage: '',     // set url for image as pause button
+	separator: ''       // set separator for nav control items
 });
 ```
 
