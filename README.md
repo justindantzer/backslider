@@ -6,7 +6,8 @@ A simple jQuery reusable slider with a few options
 ```javascript
 $(selector).backslider();
 ```
-or
+or with options
+
 ```javascript
 $(selector).backslider({
 	action: 'hover',    // set action to trigger nav control
@@ -22,5 +23,6 @@ $(selector).backslider({
 
 License
 ----------
-Copyright (c) 2013 jdantzer
-Released under the MIT license
+
+Copyright (c) 2013 jdantzer  
+Released under the MIT license  
