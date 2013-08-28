@@ -16,7 +16,7 @@ $(selector).backslider({
 	equalheight: false, // trigger height of slides to be equalized
 	interval: 10000,    // set auto-advance interval
 	navtext: '',        // set slide attribute for nav control item text
-	nextprev: false     // include next/previous controls
+	nextprev: false,    // include next/previous controls
 	pauseimage: '',     // set url for image as pause button
 	separator: ''       // set separator for nav control items
 });
