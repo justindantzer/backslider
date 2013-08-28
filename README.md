@@ -12,7 +12,7 @@ or with options
 $(selector).backslider({
 	action: 'hover',    // set action to trigger nav control
 	allowpause: false,  // show pause element
-	controls: false     // show nav controls
+	controls: false,    // show nav controls
 	equalheight: false, // trigger height of slides to be equalized
 	interval: 10000,    // set auto-advance interval
 	navtext: '',        // set slide attribute for nav control item text
