@@ -9,6 +9,7 @@
  * equalheight  bool      choose to set parent to height of tallest slide, defaults to 0
  * interval     int       set auto-advance interval in milliseconds, defaults to 10000
  * navtext      string    set the attribute containing text for the nav link
+ * nextprev     bool      include next/previous controls
  * pauseimage   string    set url for image to be used as pause button
  * separator    string    used as separator in nav controls
  */
@@ -27,6 +28,7 @@
 			equalheight:	false, 
 			interval:		10000, 
 			navtext:		'', 
+			nextprev:		false, 
 			pauseimage:		'', 
 			separator:		''
 		};
@@ -40,20 +42,21 @@
 			me.el = $(el);
 			me.slides = me.el.find('> :not(nav)');
 			
-			// starting
+			// start at 0
 			me.index = 0;
 			
 			// set beginning state
-			me.slides.eq(0).addClass('current');
-			controls();
+			me.slides.eq(me.index).addClass('current');
+			if(me.opts.controls) controls();
 			
-			if(1 == me.opts.equalheight) me.equalheight();
-			
-			$(window).resize(me.windowresize);
+			if(me.opts.equalheight){
+				me.equalheight();
+				$(window).resize(me.windowresize);
+			}
 			
 			me.el.addClass('backslider-enabled');
 			
-			if(me.opts.interval > 0) me.start(); //active = setInterval(this.advance, opts.interval);
+			if(me.opts.interval > 0) me.start();
 		}; //EF
 		
 		// set parent to slides max height
@@ -64,35 +67,37 @@
 			me.el.height(maxHeight);
 		}; //EF
 		
-		// set the next slide
-		me.advance = function(index){
-			if(typeof index == undefined) return;
+		// set slide
+		me.set = function(i){
+			if(typeof i == undefined) return;
 			
-			me.index = (index > me.slides.length + 1) ? 0 : index;
-			var switchto = me.slides.eq(me.index);
+			me.index = i;
 			
-			me.el.find('nav ol > li:not(.separator)').eq(index).addClass('sel').siblings().removeClass('sel');
-			switchto.addClass('current').siblings().removeClass('current');
+			me.el.find('nav ol > li:not(.separator)').eq(i).addClass('sel').siblings().removeClass('sel');
+			me.slides.eq(i).addClass('current').siblings().removeClass('current');
+			return me;
 		}; //EF
 		
 		// start advancing slides
 		me.start = function(){
 			me.timer = setInterval(function(){
-				me.advance(me.index + 1);
+				var i = (me.index + 1 >= me.slides.length) ? 0 : me.index + 1;
+				me.set(i);
 			}, me.opts.interval);
-			me.el.find('.play').removeClass('play');
+			if(me.opts.allowpause) me.el.find('.play').removeClass('play');
+			return me;
 		};
 		
 		// stop advancing slides
 		me.stop = function(){
 			me.timer = clearInterval(me.timer);
-			me.el.find('.pause').addClass('play');
+			if(me.opts.allowpause) me.el.find('.pause').addClass('play');
 			return me;
 		}; //EF
 		
 		// resize the slider container
 		me.windowresize = function(){
-			if(1 == me.opts.equalheight){
+			if(me.opts.equalheight){
 				me.resizetimer = clearTimeout(me.resizetimer);
 				me.resizetimer = setTimeout(me.equalheight, 50);
 			}
@@ -103,28 +108,57 @@
 		
 		// setup controls
 		function controls(){
-			var output = $('<nav></nav>').appendTo(me.el);
+			
+			// create controls
+			var output = $('<nav/>').appendTo(me.el);
+			
+			// include pause
 			if(me.opts.allowpause){
 				if('' != me.opts.pauseimage){
 					$('<img />').attr({'class': 'pause', 'src': me.opts.pauseimage, 'alt' : 'Pause'}).appendTo(output);
 				} else {
-					$('<span></span>').attr({'class': 'pause'}).text('Pause').appendTo(output);
+					$('<span/>').attr({'class': 'pause'}).text('Pause').appendTo(output);
 				}
 			}
-			var dots = $('<ol></ol>').appendTo(output);
+			
+			// include previous
+			if(me.opts.nextprev){
+				$('<a/>').attr('class', 'previous').html('Previous').appendTo(output)
+			}
+			
+			// include dots
+			var dots = $('<ol/>').appendTo(output);
 			$.each(me.slides, function(s){
-				if('' != me.opts.separator && 0 != s){
-					$('<li></li>').attr({'class': 'separator'}).text(me.opts.separator).appendTo(dots);
+				if('' != me.opts.separator && s > 0){
+					$('<li/>').attr({'class': 'separator'}).text(me.opts.separator).appendTo(dots);
 				}
 				var ctrltext = (s+1);
 				if('' != me.opts.navtext && undefined != me.slides.eq(s).attr(me.opts.navtext)) ctrltext = me.slides.eq(s).attr(me.opts.navtext);
-				$('<li></li>').addClass(0 == s ? 'sel' : '').text(ctrltext).appendTo(dots);
+				$('<li/>').addClass(me.index == s ? 'sel' : '').text(ctrltext).appendTo(dots);
 			});
 			
+			// include next
+			if(me.opts.nextprev){
+				$('<a/>').attr('class', 'next').html('Next').appendTo(output)
+			}
+			
+			// add pause action
 			if(me.opts.allowpause) me.el.find('.pause').on('click', me.stop);
+			
+			// add indicator action
 			me.el.find('nav > ol > li:not(.separator)').on(me.opts.action, function(){
 				var li = $(this);
-				me.stop().advance(li.parent().children(':not(.separator)').index(li)); // check for separator?
+				me.stop().set(li.parent().children(':not(.separator)').index(li)).start();
+			});
+			
+			// add next/previous action
+			me.el.find('.next, .previous').on('click', function(){
+				if($(this).is('.next')){
+					var i = (me.index + 1 >= me.slides.length) ? 0 : me.index + 1;
+				} else {
+					var i = (me.index - 1 < 0) ? me.slides.length - 1 : me.index - 1;
+				}
+				me.stop().set(i).start();
 			});
 			
 		}; //EF
